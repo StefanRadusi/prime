@@ -1,0 +1,116 @@
+$(document).ready(function(){
+
+    $("h3.accordion").click(function(){
+        $(this).next().toggle(200);
+    });
+
+    $("body").on('click', 'h3.accordion', function(event) {
+        $(this).next().toggle(200);
+        /* Act on the event */
+    });
+
+    $("body").on('click', 'h4.accordion', function(event) {
+        $(this).next().toggle(200);
+        $(this).next().next().toggle(200);
+        $(this).parent().toggleClass('shadow');
+    });
+
+    $("td").popover({ trigger: "manual" , html: true, animation:true}).on("click", function () {
+    	var _this = this;
+    	$(this).popover("show");
+    	$(".popover").on("mouseleave", function () {
+        	$(_this).popover('hide');
+    	});
+	}).on("mouseleave", function () {
+    	var _this = this;
+    	setTimeout(function () {
+        if (!$(".popover:hover").length) {
+            $(_this).popover("hide");
+        }
+    }, 300);
+    });
+
+    var time = new Date().getTime();
+    $(document.body).bind("mousemove keypress", function () {
+        time = new Date().getTime();
+    });
+
+    setInterval(function() {
+        if (new Date().getTime() - time >= 70000) {
+            window.location.reload(true);
+        }
+    }, 36000000);
+
+    add_menu_animation();
+     
+     // loading_animation.show();
+    // $('body').on('click', function(event) {
+    //     let loading_animation = new LoadingAnimation();
+    //     loading_animation.show(200);
+    //     console.log('inn');
+    //     loading_animation.loading_body.one('mouseenter', function(event){
+    //         // console.log('inn');
+    //         // loading_animation.succes();
+    //         loading_animation.fail();
+
+    //     });
+    // });
+
+});
+
+class LoadingAnimation {
+    constructor() {
+
+        this.loading_body = $(
+            '<svg class="loading_animation" with="80px" height="40px" margin="0" viewBox="0 0 200 100">\
+                <circle class="c1" fill="white" cx="25" cy="50" r="20"></circle>\
+                <circle class="c2" fill="white" cx="100" cy="50" r="20"></circle>\
+                <circle class="c3" fill="white" cx="175" cy="50" r="20"></circle>\
+                \
+                <g>\
+                    <circle class="c4" fill="white"  cx="25" cy="50" r="20"></circle>\
+                    <circle class="c6" fill="white"  cx="175" cy="50" r="20"></circle>\
+                    <circle class="c5" fill="white"  cx="100" cy="50" r="20"></circle>\
+                    <path class="check" d="m66.43521,44.44445l20.60173,19.90733l40.27774,-62.49993" stroke-width="10" stroke="rgba(86,202,87,1)" fill="none"/>\
+                </g>\
+                <text x="-100px" y="60px" fill="red" font-size="40px" font-weight="bold">FAIL</text>\
+            </svg>'
+        ).hide();
+    }
+
+    show(val) {
+        this.loading_body.appendTo('body').fadeIn(val);
+    }
+
+    succes(){
+        console.log('inn');
+       this.loading_body.find('circle').addClass('ok');
+       this.loading_body.find('g').addClass('ok');
+       this.loading_body.find('.check').addClass('ok');
+       this.loading_body.find('g.ok').on('animationend', $.proxy(function(event) {
+        
+            if (event.originalEvent.animationName === 'out') {
+                this.loading_body.remove();
+            }
+
+        }, this));
+    }
+
+    fail(){
+        console.log('fail');
+        this.loading_body.find('circle').addClass('fail');
+        this.loading_body.find('text').addClass('fail');
+
+    }
+}
+
+function add_menu_animation() {
+    $('svg.menu_button').hover(function() {
+        console.log('in');
+        $(this).removeClass('hover_off');
+        $(this).addClass('hover_on');
+    }, function() {
+        $(this).removeClass('hover_on');
+        $(this).addClass('hover_off');
+    });
+}

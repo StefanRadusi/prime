@@ -1,0 +1,298 @@
+div.data {
+	display: flex;
+	/*flex-wrap: wrap;*/
+	justify-content: center;
+	align-items: flex-start;
+	width: 100%;
+	position: relative;
+}
+
+div.container {
+	margin: 0;
+	min-width: initial;
+}
+
+div.Avg_Panel * {
+	/*border: 1px solid black;*/
+	border-radius: 2px;
+	cursor: default;
+	color: #093572;
+}
+
+div.Avg_Panel {
+	/*border: 1px solid black;*/
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-around;
+	max-width: 30%;
+	margin: 10px;
+	/*background-color: #F8F9F9;*/
+	background: linear-gradient(to bottom, rgba(248,249,249,1),rgba(248,249,249,.5)) ;
+	perspective: 1000px;
+
+    /*border: none;*/
+}
+
+div.Avg_Panel > h4:first-child {
+	width: 100%;
+	text-align: center;
+	margin: 0;
+	margin-bottom: 5px;
+	background-color: #5E82B2; 
+	padding: 5px;
+	color: #F8F9F9;
+	box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.5);
+}
+
+div.Avg_Panel > div:nth-child(2) p {
+	font-size: 30px;
+	/*margin: 10px;*/
+	height: 50px;
+	width: 50px;
+	display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    background-color:  #5E82B2; 
+
+    border-radius: 6px;
+    /*border-bottom-left-radius: 6px;*/
+    color:#F8F9F9;
+
+    transition: color 0.3s, box-shadow 0.3s;
+}
+
+
+div.Avg_Panel > div:nth-child(2) p:hover {
+	color: #093572;
+	box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.5);
+}
+
+div.Avg_Panel > div:nth-child(3) {
+	margin: 10px;
+	/*transform: translateX(-50px);*/
+}
+
+.panel_buttons_show {
+	transform: translateX(0px);
+}
+
+/*div.Avg_Panel > div:nth-child(3) {
+	margin: 10px;
+}*/
+
+
+div.Avg_Panel span {
+	font-size: 30px;
+	height: 50px;
+	width: 50px;
+	margin: 4px;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+
+	background-color:  #5E82B2; 
+
+    border-radius: 6px;
+    /*border-bottom-left-radius: 6px;*/
+   	color:#F8F9F9;
+   	transition: color 0.3s, box-shadow 0.3s, background-color 0.4s;
+}
+
+div.Avg_Panel span:hover {
+	color: #093572;
+	box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.5);
+}
+
+
+
+div.Avg_Panel div.options {
+	width: calc(100% - 5px);
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-content: flex-start;
+	/*margin-top: 5px;*/
+	/*margin-bottom: 5px;*/
+	margin: 5px;
+	border-top: 1px solid #B1C5DF;
+	border-bottom: 1px solid #B1C5DF;
+}
+
+div.Avg_Panel div.options > h5 {
+
+}
+
+div.Avg_Panel div.options > div p:first-child {
+	font-weight: bold;
+	border-bottom: 1px solid #FFE9C6;
+}
+
+div.Avg_Panel div.options h5 {
+	width: 100%;
+	margin: 0;
+	margin-bottom: 3px;
+	font-size: 20px;
+	font-weight: bold;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+div.Avg_Panel div.options div {
+	width: 30%;
+}
+
+div.Avg_Panel div.options div.color_range {
+	perspective: 800px;
+}
+
+div.Avg_Panel div.options div.color_range input {
+	width: calc(100% - 5px);
+
+	border-style: solid;
+	border-bottom-width: 4px; 
+	border-top-width: 4px; 
+	transition: box-shadow 0.3s;
+	margin: 2px;
+	backface-visibility: hidden;
+	transition: all 0.5s;
+	transform-style: preserve-3d;
+}
+
+div.Avg_Panel div.options div.color_range input.update {
+	transform: rotateX( 100deg );
+}
+
+div.Avg_Panel div.options div.color_range input:focus {
+	box-shadow: 0 0 5px 1px #969696;
+}
+
+
+div.Avg_Panel div.options div.icons {
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	/*width: 25%;*/
+}
+
+div.icons p {
+	width: 100%
+}
+
+div.icons div span {
+	margin: 5px;
+	width: 50px;
+}
+
+div.icons div {
+	margin: 5px;
+	width: 50px !important;
+	height: 50px;
+}
+
+div.Avg_Panel div.options div.columns p {
+	transition: box-shadow 0.3s, padding 0.6s;
+}
+
+div.Avg_Panel div.options div.columns p:hover {
+	box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.5);
+	padding-left: 6px; 
+}
+
+div.Avg_Panel div.build_panel {
+	width: 100%;
+	display:flex;
+	flex-wrap: wrap;
+	align-items: center;
+	background-color: #FFE9C6;
+	border-radius: 6px;
+	margin-top: 0px;
+	perspective: 1000px;
+	box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.5);
+	max-height: 0;
+
+	opacity:0;
+	transform-origin: top;
+	transform: rotateX( -90deg );
+
+	transition: opacity 0.5s, transform 0.5s, max-height 0.7s, margin-top 0.5s, box-shadow 0.5s, background-color 0.5s;
+}
+
+div.Avg_Panel div.build_panel.show_nice {
+	margin-top: 10px;
+	max-height:100px;
+	opacity: 1;
+	transform-origin: top;
+	transform: rotateX( 0deg );
+}
+
+div.Avg_Panel div.build_panel span {
+	height: 50px;
+	width: 50px;
+}
+
+div.Avg_Panel div.build_panel div {
+	height: 50px;
+	width: 50px;
+	margin: 5px;
+
+}
+
+div.Avg_Panel div.build_panel h3 {
+	margin: 0;
+	margin-left: auto;
+	margin-right: 10px;
+}
+
+div.Avg_Panel div.build_panel h3 {
+	margin: 0;
+	margin-left: auto;
+	margin-right: 10px;
+	font-weight: bold;
+	color: #D04B00;
+	background: white;
+	
+	padding: 3px;
+	transition: background 0.3s, color 0.3s;
+	border-radius: 6px;
+}
+
+div.Avg_Panel div.build_panel h3:hover {
+
+	color: white;
+	background: #D04B00;
+}
+
+div.Avg_Panel div.build_panel input {
+	max-width: 100px;
+	font-family: sans-serif;
+    font-size: 18px;
+    padding: 10px;
+    border: none;
+    transition: box-shadow 0.3s;
+}
+
+
+
+div.Avg_Panel div.build_panel input:focus {
+	box-shadow: 0 0 5px 1px #969696;
+}
+
+div.Avg_Panel div.build_panel p {
+	margin: 10px;
+	font-size: 20px; 
+}
+
+div.Avg_Panel div.build_panel p {
+	margin: 10px;
+	font-size: 20px;
+
+	transition: all 0.5s;
+	/*background: grey; */
+}
+
+div.Avg_Panel div.build_panel p.update {
+	transform-origin: left;;
+	transform: rotateY( 90deg );
+	color: rgba(0,0,0,0);
+}

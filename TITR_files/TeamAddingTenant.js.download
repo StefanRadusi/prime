@@ -1,0 +1,310 @@
+"use strict"
+
+var check = {};
+var days_type = ['PRODUCTION_DAYS', 'WORK_CHECKS_DAYS', 'SUPPORT_DAYS', 'MARKETMAINTENANCE', 'TRAINING_DAYS', 'PTO_DAYS'];
+// var goodies = require('./JS/Goodies.js');
+// import {goodies} from Goodies;
+
+
+$(document).ready(function(){
+	$('body').popover({
+  		selector: '.in_pop_over',
+  		html: true, 
+  		animation:true
+	});
+	
+	$("ul.nav li a").one('click', function() {
+		var att = $(this).attr('type');
+		console.log(att);
+		if (att && !check.hasOwnProperty(att)) {
+			ajax_call(att);
+		}
+
+		$("td").popover({ trigger: "manual" , html: true, animation:true}).on("click", function () {
+	    	var _this = this;
+	    	$(this).popover("show");
+	    	$(".popover").on("mouseleave", function () {
+	        	$(_this).popover('hide');
+	    	});
+		}).on("mouseleave", function () {
+	    	var _this = this;
+	    	setTimeout(function () {
+	        if (!$(".popover:hover").length) {
+	            $(_this).popover("hide");
+	        }
+	    }, 300);
+	    });
+		});
+
+	// console.log(base_url);
+
+	$("div.tab-content").on('click', 'h3.accordion' , function() {
+        $(this).next().toggle(200);
+    });
+
+
+
+    
+});
+
+function ajax_call (type) {
+	$('#' + type).append('<div class="loading" style="display:none"><p>LOADING</p><p class="success" style="display:none">SUCCESS</p><p class="fail" style="display:none">FAIL</p></div>');
+	$('.loading').show('fast');
+	var base_url = window.location.href;
+
+	var ajax_link  = base_url.replace(/(\?.+)/, `type/${type}/$1` );
+	// console.log(ajax_link);
+
+	setTimeout(function () {
+		$.ajax({
+		    url: ajax_link,
+		    // data: JSON.stringify(send_obj),
+		    type: "get",
+		    async: false
+		})
+
+		  .done(function( json ) {
+		  	// alert(JSON.stringify(json));
+		  	if (json.responde == 'good') {
+		  		$('div.loading p').hide(100);
+		  		$('p.success').show(100);
+		  		// console.log(json);
+		  		// pop_section_type(json.result, type, ['Dates', 'Tenant Added', 'Total PID Complete'], ['NEWLEASESADDED', 'TEAM_15_COMPLETE']);
+		  		pop_section_type(json.result, type, json.table_header, json.workings_days_header);
+		  		check[type] = 1;
+		  	} else {
+		  		$('div.loading p').hide(100);
+		  		$('p.fail').show(100);
+		  	}
+		    
+		    setTimeout(function () { $('div.loading').slideUp(500, function() {$(this).remove()}) }, 1000);
+		  })
+
+		  .fail(function( xhr, status, errorThrown ) {
+		    $('div.loading p').hide(100);
+		  	$('p.fail').show(100);
+		  	setTimeout(function () { $('div.loading').fadeOut(2000, function() {$(this).remove()}) }, 1000);
+		  });
+	}, 1000);
+}
+
+function pop_section_type (source_data, type, header, workings_days_header) {
+	var append_str = create_html_panel(source_data.total_summery, header.order, header.alias, 'total_summery');
+	$(append_str).appendTo('#' + type).toggle('fast');
+
+	for (name in source_data) {
+		if(name === 'total_summery') continue;
+		append_str = create_html_panel(source_data[name], header.order, header.alias, name, true, workings_days_header, type);
+		$(append_str).appendTo('#' + type).toggle('2000');
+	}
+
+	$("body").on("click", "td",function () {
+    	var _this = this;
+    	$(this).popover("show");
+    	$(".popover").on("mouseleave", function () {
+        	$(_this).popover('hide');
+    	});
+	});
+	$("body").on("mouseleave", "td", function () {
+    	var _this = this;
+    	setTimeout(function () {
+	        if (!$(".popover:hover").length) {
+	            $(_this).popover("hide");
+	        }
+    	}, 300);
+   	});
+
+}
+
+function create_html_panel (panel_json, header, keys_source, title, small, workings_days_header, type) {
+	var dates = Object.keys(panel_json);
+	console.log(panel_json);
+	dates = dates.sort();
+	// console.log(type);
+	// console.log(dates);
+
+	var append_str = '<table class=" ' + (small ? 'normal' : '') + ' table table-striped table-hover panel"><thead><tr>';
+	for (var i = 0; i < header.length; i++) {
+		append_str = append_str + '<th>' + keys_source[header[i]] + '</th>';
+	}
+	append_str = append_str + '</tr></thead><tbody>';
+	for (var i = 0; i < dates.length; i++) {
+		if (dates[i] === 'workings_days') continue;
+
+		// console.log(Object.keys(panel_json[dates[i]]).length);
+
+		append_str = append_str + '<tr> <td class="in_pop_over"';
+		// console.log(panel_json[dates[i]]);
+		if (panel_json[dates[i]].hasOwnProperty('workings_hours')) {
+			// console.log("innnn");
+			append_str = append_str + 
+				'data-trigger="focus" \
+				 tabindex="0" \
+				 data-toggle="popover" \
+				 data-placement="bottom" \
+				 data-content=" \
+				 <table class=\'table in_pop_over\'> \
+				 	<thead> \
+				 		<th>Prod Hours</th>\
+				 		<th>Total</th>\
+				 	</thead>\
+				 	<tbody> \ ';
+			append_str = append_str + '<tr><td> Prod Hours</td> <td> ' + panel_json[dates[i]].workings_hours.PRODUCTION_HOURS + '</td></tr>';
+			for (var hours_type in panel_json[dates[i]].workings_hours) {
+				if (hours_type == 'PRODUCTION_HOURS' || hours_type == 'REPORTDATE' || hours_type == 'RESEARCHER') continue;
+				append_str = append_str + '<tr><td>' + hours_type + '</td><td>' + panel_json[dates[i]].workings_hours[hours_type] + '</td></tr>';
+			}
+			append_str = append_str + '</tbody></table>">' + dates[i] + ' > </td>';
+
+		} else {
+			append_str = append_str + '>' + dates[i] + '</td>';
+		} 
+
+		for (var j = 1; j < header.length; j++) {
+			// if(!panel_json[dates[i]].hasOwnProperty(keys_source[j])) continue;
+			append_str = append_str + '<td class="in_pop_over"';
+			if (dates[i] != 'TOTAL_Avg' && panel_json[dates[i]].hasOwnProperty(header[j])) {
+
+				var pop_up_html = 
+
+				// append_str = append_str + 
+				'data-trigger="focus" \
+				 data-toggle="popover" \
+				 data-placement="bottom" \
+				 data-content=\' \
+				 <table class="table in_pop_over"> \
+				 	<thead> \
+				 		<tr> \
+				 			<th>Marketid</th> \
+				 			<th>Total per Market</th> \
+				 		</tr> \
+				 	</thead> \
+				 	<tbody> \
+				';
+				for (var market in panel_json[dates[i]][header[j]].Markets) {
+					pop_up_html = pop_up_html + '<tr><td>' + market + '</td>';
+					pop_up_html = pop_up_html + '<td>' + panel_json[dates[i]][header[j]].Markets[market].Total + '</td>';
+					if (panel_json[dates[i]][header[j]].Markets[market].hasOwnProperty('PIDS')) {
+						pop_up_html = pop_up_html + '<td>' + panel_json[dates[i]][header[j]].Markets[market].PIDS + '</td>';
+					}
+					pop_up_html = pop_up_html + '</tr>';
+				}
+				pop_up_html = pop_up_html + '</tbody></table>';
+
+				if (type === 'TeamLeases' && Object.keys(panel_json[dates[i]]).length > header.length) {
+					// console.log (dates[i]);
+					// console.log('need additional data');
+
+					pop_up_html = leases_pop_up(panel_json[dates[i]], header[j], pop_up_html);
+				} 
+
+				append_str = append_str + pop_up_html;
+
+			} else if (!panel_json[dates[i]].hasOwnProperty(header[j])) {
+				panel_json[dates[i]][header[j]] = {Total : 0};
+			}
+
+			append_str = append_str + ' \'>' + panel_json[dates[i]][header[j]].Total + '</td>';
+		}
+
+		append_str = append_str + '</tr>';
+	}
+
+	append_str = append_str + '</tbody></table>';
+
+	var final_html_string = '<div class="names" style="display:none"><h3 class="accordion hvr-float-shadow">Team Production';
+	// append_str = '<div class="names" style="display:none"><' + (small ? 'h4' : 'h3') + ' class="accordion hvr-float-shadow">' + (title === 'total_summery' ? 'Team Production' : title)  + '</' + (small ? 'h4' : 'h3') + '>' + append_str + '</div>';
+	if (small) {
+		final_html_string = '<div class="names" style="display:none"><h4 class="accordion hvr-float-shadow">';
+		// console.log(header); 
+		final_html_string = final_html_string  + '<div class="label ' + goodies.get_label_class_tenant(panel_json['TOTAL_Avg'] ? panel_json.TOTAL_Avg[header[1]].Total : 0) + '">\
+			<span class="glyphicon glyphicon-user" aria-hidden="true"></span>\
+			<p>' + (panel_json['TOTAL_Avg'] ? panel_json.TOTAL_Avg[header[1]].Total : 0) + '</p>\
+			</div>';
+		final_html_string = final_html_string + title + '</h4>' + append_str;
+		final_html_string = final_html_string + '<div class="bottom_table_data container-fluid"><div class="prod_days">';
+		
+		for (var i = 0; i < workings_days_header.order.length; i++) {
+			final_html_string = final_html_string + '<p class="' + (i == 0 && 'bigger') + '">' + workings_days_header.alias[workings_days_header.order[i]] + '  <span class="badge">' +  ( panel_json.workings_days[workings_days_header.order[i]] ? parseFloat(panel_json.workings_days[workings_days_header.order[i]]).toFixed(2) : 0 ) + '</span></p>'
+		}
+
+
+		final_html_string = final_html_string + '</div></div></div>';
+	} else {
+		final_html_string = final_html_string + '</h3>'+ append_str + '</div>';
+	}
+
+	return final_html_string;
+}
+
+function leases_pop_up (day, header, pop_up_html) {
+
+	var addtion_pop_info =
+	'data-trigger="focus" \
+				 data-toggle="popover" \
+				 data-placement="bottom" \
+				 data-content=\' \
+				 <table class="table in_pop_over"> \
+				 	<thead> \
+				 		<tr> \
+				 			<th>Marketid</th> \
+	';
+
+	// console.log(header)
+	switch(header) {
+		case 'SUCCESS':
+			addtion_pop_info = addtion_pop_info + '<th>Succesful Calls</th><th>Tenants Reached</th><th>Success (%)</th></tr></thead>';
+			return addtion_pop_info = addtion_pop_info + leases_pop_t_body(day, ['SUCCESFUL_CALLS', 'TENANTS_REACHED', 'SUCCESS']);
+		case 'CALLS_FOR_ONE_LEASE':
+			addtion_pop_info = addtion_pop_info + '<th>Tenants Called</th><th>Succesful Calls</th><th>Calls one lease (%)</th></tr></thead>';
+			return addtion_pop_info = addtion_pop_info + leases_pop_t_body(day, ['TENANTS_CALLED', 'SUCCESFUL_CALLS', 'CALLS_FOR_ONE_LEASE']);
+		case 'INFO_UNITS_OBTAINED':
+			addtion_pop_info = addtion_pop_info + 
+				' <th>Total</th> \
+				  <th>Occupancy_Date</th> \
+				  <th>Expiry_date</th> \
+				  <th>Price</th> \
+				  <th>Lease_Type</th> \
+				  <th>Square_feet</th> \
+				  </tr></thead>';
+			return addtion_pop_info = addtion_pop_info + leases_pop_t_body(day,['INFO_UNITS_OBTAINED', 'OCCUPANCY_DATE', 'EXPIRY_DATE', 'PRICE', 'LEASE_TYPE', 'SQUARE_FEET']);
+		default:
+				return pop_up_html ;
+	}
+
+}
+
+function leases_pop_t_body (data, columns) {
+	var t_body_html = '<tbody>';
+
+	var aggregate_columns = [];
+
+	for (var column of columns) {
+		if (data.hasOwnProperty(column)) {
+			console.log(data[column]);
+			for (var market in data[column].Markets) {
+				if (aggregate_columns.filter(a => a[0] == market).length == 0) aggregate_columns.push([market]);
+				for (var row of aggregate_columns) {
+					if (row[0] == market) {
+						row.push(data[column].Markets[market].Total);
+					} 
+				}
+				
+			}
+		}
+	}	
+
+	console.log(aggregate_columns);
+
+	for (var row of aggregate_columns) {
+		// console.log(row);
+		t_body_html = t_body_html + '<tr><td>' + row.join('</td><td>') + '</td></tr>';
+	}	
+
+
+
+	t_body_html = t_body_html + '</tbody></table>';
+
+	// console.log(t_body_html);
+	return t_body_html;
+}

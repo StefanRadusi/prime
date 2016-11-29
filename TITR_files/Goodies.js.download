@@ -1,0 +1,19 @@
+var goodies = {
+	get_label_class_tenant : function (number) {
+
+			if (number) {
+				if (number < 80) {
+					return 'label-danger';
+				} else if (number <= 100) {
+					return 'label-success';
+				} else {
+					return 'label-warning';
+				}	
+			}
+
+			return 'label-default';
+		}
+};
+
+// export goodies;
+
